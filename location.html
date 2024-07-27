@@ -1,46 +1,57 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Get Location</title>
+    <title>Map Image</title>
 </head>
 <body>
-    <h1>Your Location</h1>
-    <button onclick="getLocation()">Get My Location</button>
-    <p id="location"></p>
-
+    <h1>Map Image of Your Location</h1>
+    <img id="map-image" src="" alt="Map Image">
+    
     <script>
+        // Replace with your own Google Maps API key
+        const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY';
+
+        // Function to get the user's location
         function getLocation() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
+                navigator.geolocation.getCurrentPosition(showMap, showError);
             } else {
-                document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
+                alert("Geolocation is not supported by this browser.");
             }
         }
 
-        function showPosition(position) {
+        // Function to show the map image
+        function showMap(position) {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-            document.getElementById("location").innerHTML = 
-                "Latitude: " + latitude + "<br>Longitude: " + longitude;
+            
+            // Construct the URL for the Static Maps API
+            const url = `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=14&size=600x400&key=${apiKey}`;
+            
+            // Set the src attribute of the img element to the map URL
+            document.getElementById('map-image').src = url;
         }
 
+        // Function to handle errors
         function showError(error) {
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    document.getElementById("location").innerHTML = "User denied the request for Geolocation.";
+                    alert("User denied the request for Geolocation.");
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    document.getElementById("location").innerHTML = "Location information is unavailable.";
+                    alert("Location information is unavailable.");
                     break;
                 case error.TIMEOUT:
-                    document.getElementById("location").innerHTML = "The request to get user location timed out.";
+                    alert("The request to get user location timed out.");
                     break;
                 case error.UNKNOWN_ERROR:
-                    document.getElementById("location").innerHTML = "An unknown error occurred.";
+                    alert("An unknown error occurred.");
                     break;
             }
         }
+
+        // Get the location when the page loads
+        window.onload = getLocation;
     </script>
 </body>
 </html>
